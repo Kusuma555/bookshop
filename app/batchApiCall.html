@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Request with Deep Entity</title>
+</head>
+<body>
+    <h1>Batch Request with Deep Entity</h1>
+    <button id="submitBatchRequest">Submit Batch Request</button>
+    <pre id="responseOutput"></pre>
+
+    <script>
+        async function sendBatchRequest() {
+            const batchEndpoint = "http://localhost:4004/odata/v4/chart/$batch";
+
+            const batchRequestBody = {
+                requests: [
+                    {
+                        id: "1",
+                        method: "POST",
+                        url: "UserDashboard",
+                        headers: { "Content-Type": "application/json" },
+                        body: {
+                            id: "16",
+                            description: "DeepEntityDashboard",
+                            name: "dashboard-unique-id-001",
+                            type: "CUSTOM",
+                            title: "Deep Entity Dashboard",
+                            position: 5,
+                            charts: [
+                                {
+                                    id: "16",
+                                    title: "DeepEntityChart",
+                                    name: "chart-unique-id-001",
+                                    type: "CUSTOM",
+                                    description: "A sample chart with measures and dimensions",
+                                    filterExpression: "&dimension_order=ApiProxy&measure_order=Sum_CallCount",
+                                    chartType: {
+                                        code: "03",
+                                        name: "column",
+                                        icon: "sap-icon://bar-chart"
+                                    },
+                                    chartMeasures: [
+                                        {
+                                            measureName: "CallCount",
+                                            measureCode: {
+                                                aggregation: "Sum",
+                                                code: "CallCount"
+                                            }
+                                        }
+                                    ],
+                                    chartDimensions: [
+                                        {
+                                            dimensionName: "ApiProxy",
+                                            dimensionCode: {
+                                                code: "ApiProxy"
+                                            }
+                                        }
+                                    ],
+                                    userDashboard: [
+                                        {
+                                            position: 1,
+                                            visibility: true,
+                                            userDashboard: {
+                                                id: "16"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        id: "2",
+                        method: "POST",
+                        url: "UserDashboardChart",
+                        headers: { "Content-Type": "application/json" },
+                        body: {
+                            userDashboardId: "16",
+                            chartId: "1",
+                            runtimeType: "bic",
+                            position: 1,
+                            visibility: true
+                        }
+                    }
+                ]
+            };
+
+            try {
+                const response = await fetch(batchEndpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(batchRequestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const responseData = await response.json();
+                document.getElementById("responseOutput").textContent = JSON.stringify(responseData, null, 2);
+
+                // Print specific details
+                const charts = responseData.responses[0]?.body?.charts || [];
+                charts.forEach((chart, index) => {
+                    console.log(`Chart ${index + 1}:`);
+                    console.log(`Title: ${chart.title}`);
+                    console.log(`Measures:`, chart.chartMeasures);
+                    console.log(`Dimensions:`, chart.chartDimensions);
+                });
+            } catch (error) {
+                console.error("Error during batch request:", error);
+                document.getElementById("responseOutput").textContent = `Error: ${error.message}`;
+            }
+        }
+
+        document.getElementById("submitBatchRequest").addEventListener("click", sendBatchRequest);
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+id,name,positiveTrend,measureCode_code,measureCode_aggregation
+01,totalApiCalls,INCREASING,CallCount,Sum
+02,totalResponseTime,DECREASING,ResponseTime,Sum
+03,requestProcessingLatency,DECREASING,RequestProcessingLatency,Sum
+04,totalApiErrors,DECREASING,Errors,Sum
+05,sumTargetError,DECREASING,TargetError,Sum
+06,sumTargetResponseTime,DECREASING,TargetResponseTime,Sum
