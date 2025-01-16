@@ -1,6 +1,5 @@
 namespace com.sap.apimgmt.analytics.developer;
 
-
 entity Developer {
   key id: UUID;
   firstName: String;

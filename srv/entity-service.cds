@@ -1,5 +1,6 @@
 using { com.sap.apimgmt.analytics.developer as developer } from '../db/entity-schema.cds';
 
+
 service DeveloperService {
   @Capabilities: { Insertable:true, Updatable:true, Deletable:true, Readable:true}
   entity Developers as projection on developer.Developer;
